@@ -14,7 +14,7 @@ export class JsonDbService {
     try {
       await fs.mkdir(this.dataDir, { recursive: true });
     } catch (e) {
-      // ignoramos si ya existe
+      void e;
     }
   }
 
@@ -25,9 +25,10 @@ export class JsonDbService {
     try {
       const content = await fs.readFile(file, 'utf8');
       if (!content.trim()) return [];
-      return JSON.parse(content);
-    } catch (err: any) {
-      if (err.code === 'ENOENT') {
+      return JSON.parse(content) as T[];
+    } catch (err) {
+      const errObj: { code: string } = err as { code: string };
+      if (errObj.code === 'ENOENT') {
         return [];
       }
       throw err;
